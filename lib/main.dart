@@ -15,6 +15,29 @@ class ExpensesApp extends StatelessWidget {
   Widget build(BuildContext context) {
     return MaterialApp(
       home: MyHomePage(),
+      theme: ThemeData(
+          colorScheme:
+              ColorScheme.fromSwatch(primarySwatch: Colors.purple).copyWith(
+            secondary: Colors.amber,
+          ),
+          fontFamily: 'Quicksand',
+          textTheme: ThemeData.light().textTheme.copyWith(
+                  headline1: TextStyle(
+                fontFamily: 'OpenSans',
+                fontSize: 18,
+                color: Colors.black,
+                fontWeight: FontWeight.w600,
+              )),
+          appBarTheme: AppBarTheme(
+              toolbarTextStyle: ThemeData.light()
+                  .textTheme
+                  .copyWith(
+                      headline1: TextStyle(
+                    fontFamily: 'OpenSans',
+                    fontSize: 20,
+                    fontWeight: FontWeight.bold,
+                  ))
+                  .headline6)),
     );
   }
 }
@@ -69,7 +92,9 @@ class _MyHomePageState extends State<MyHomePage> {
   Widget build(BuildContext context) {
     return Scaffold(
         appBar: AppBar(
-          title: const Text('Despesas Pessoais'),
+          title: const Text(
+            'Despesas Pessoais',
+          ),
           actions: <Widget>[
             IconButton(
               onPressed: () => _openTransactionFormModal(context),
