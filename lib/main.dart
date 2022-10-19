@@ -18,22 +18,26 @@ class ExpensesApp extends StatelessWidget {
       home: MyHomePage(),
       theme: ThemeData(
           colorScheme:
-              ColorScheme.fromSwatch(primarySwatch: Colors.purple).copyWith(
-            secondary: Colors.amber,
+              ColorScheme.fromSwatch(primarySwatch: Colors.blue).copyWith(
+            secondary: Colors.blue[700],
           ),
           fontFamily: 'Quicksand',
           textTheme: ThemeData.light().textTheme.copyWith(
-                  headline1: TextStyle(
+              headline1: const TextStyle(
                 fontFamily: 'OpenSans',
                 fontSize: 18,
                 color: Colors.black,
                 fontWeight: FontWeight.w600,
+              ),
+              button: const TextStyle(
+                color: Colors.white,
+                fontWeight: FontWeight.bold,
               )),
           appBarTheme: AppBarTheme(
               toolbarTextStyle: ThemeData.light()
                   .textTheme
                   .copyWith(
-                      headline1: TextStyle(
+                      headline1: const TextStyle(
                     fontFamily: 'OpenSans',
                     fontSize: 20,
                     fontWeight: FontWeight.bold,
@@ -44,46 +48,29 @@ class ExpensesApp extends StatelessWidget {
 }
 
 class MyHomePage extends StatefulWidget {
+  const MyHomePage({super.key});
+
   @override
   State<MyHomePage> createState() => _MyHomePageState();
 }
 
 class _MyHomePageState extends State<MyHomePage> {
-  final List<Transaction> _transactions = [
-    Transaction(
-      id: 't0',
-      title: 'Conta antiga',
-      value: 310.76,
-      date: DateTime.now().subtract(Duration(days: 30)),
-    ),
-    Transaction(
-      id: 't1',
-      title: 'Conta #01',
-      value: 310.76,
-      date: DateTime.now().subtract(Duration(days: 3)),
-    ),
-    Transaction(
-      id: 't2',
-      title: 'Conta #02',
-      value: 211.30,
-      date: DateTime.now().subtract(Duration(days: 4)),
-    ),
-  ];
+  final List<Transaction> _transactions = [];
 
   List<Transaction> get _recentTransactions {
     return _transactions.where((tr) {
       return tr.date.isAfter(DateTime.now().subtract(
-        Duration(days: 7),
+        const Duration(days: 7),
       ));
     }).toList();
   }
 
-  _addTransaction(String title, double value) {
+  _addTransaction(String title, double value, DateTime date) {
     final newTransaction = Transaction(
       id: Random().nextDouble().toString(),
       title: title,
       value: value,
-      date: DateTime.now(),
+      date: date,
     );
 
     setState(() {
@@ -93,14 +80,21 @@ class _MyHomePageState extends State<MyHomePage> {
     Navigator.of(context).pop();
   }
 
+  _removeTransction(String id) {
+    setState(() {
+      _transactions.removeWhere((tr) => tr.id == id);
+    });
+  }
+
   _openTransactionFormModal(BuildContext context) {
     showModalBottomSheet(
-        context: context,
-        builder: (_) {
-          return TransactionForm(
-            _addTransaction,
-          );
-        });
+      context: context,
+      builder: (_) {
+        return TransactionForm(
+          _addTransaction,
+        );
+      },
+    );
   }
 
   @override
@@ -113,7 +107,7 @@ class _MyHomePageState extends State<MyHomePage> {
           actions: <Widget>[
             IconButton(
               onPressed: () => _openTransactionFormModal(context),
-              icon: Icon(Icons.add),
+              icon: const Icon(Icons.add),
             )
           ],
         ),
@@ -122,12 +116,12 @@ class _MyHomePageState extends State<MyHomePage> {
             crossAxisAlignment: CrossAxisAlignment.stretch,
             children: <Widget>[
               Chart(_recentTransactions),
-              TransactionList(_transactions),
+              TransactionList(_transactions, _removeTransction),
             ],
           ),
         ),
         floatingActionButton: FloatingActionButton(
-          child: Icon(Icons.add),
+          child: const Icon(Icons.add),
           onPressed: () => _openTransactionFormModal(context),
         ),
         floatingActionButtonLocation: FloatingActionButtonLocation.centerFloat);
